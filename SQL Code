@@ -1,0 +1,68 @@
+-- Covid-19 Mortality rate to date
+
+Select SUM(new_cases) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(New_Cases)*100 as DeathPercentage
+From `project-01-357317.COVID.Covid_Deaths`
+where continent is not null 
+order by 1,2
+
+
+
+
+-- Total Death Count Per Continent
+
+Select location, SUM(cast(new_deaths as int)) as TotalDeathCount
+From `project-01-357317.COVID.Covid_Deaths`
+Where continent is null 
+and location not in ('World', 'European Union', 'International','Upper middle income', 'High income', 'Lower middle income', 'Low income')
+Group by location
+order by TotalDeathCount desc
+
+
+
+
+-- Percentage Of Population Infected
+
+Select Location, Population, MAX(total_cases) as HighestInfectionCount,  Max((total_cases/population))*100 as PercentPopulationInfected
+From `project-01-357317.COVID.Covid_Deaths`
+Group by Location, Population
+order by PercentPopulationInfected desc
+
+
+
+
+-- Total Count Of Population Vaccinated
+
+Select SUM(vac.new_vaccinations) as total_vaccinations, dea.population as total_population, SUM(cast(vac.new_vaccinations as int))/SUM(dea.population)*100 as VaccinatedPercentage
+FROM `project-01-357317.COVID.Covid_Deaths` dea
+JOIN `project-01-357317.COVID.Covid_Vaccinations` vac
+ON dea.location = vac.location
+and dea.date = vac.date
+Group By population
+order by 1,2
+
+
+
+
+-- Percentage Of Population Vaccinated Per County
+
+Select dea.location, dea.population, dea.date, MAX(vac.new_vaccinations) as TotalVaccinationCount,  Max((vac.new_vaccinations/dea.population))*100 as PercentPopulationVaccinated
+FROM `project-01-357317.COVID.Covid_Deaths` dea
+JOIN `project-01-357317.COVID.Covid_Vaccinations` vac
+ON dea.location = vac.location
+and dea.date = vac.date
+Group by Location, Population,date
+order by PercentPopulationVaccinated desc
+
+
+
+
+-- Total Vaccination Count Per Continent
+
+Select dea.location, SUM(cast(vac.new_vaccinations as int)) as TotalVaccineCount
+FROM `project-01-357317.COVID.Covid_Deaths` dea 
+JOIN `project-01-357317.COVID.Covid_Vaccinations` vac
+ON dea.location = vac.location
+and dea.date = vac.date
+where dea.location in ('Asia','Europe','North America','South America','Africa','Oceania')
+Group by location
+order by TotalVaccineCount desc
