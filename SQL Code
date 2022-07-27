@@ -30,18 +30,6 @@ order by PercentPopulationInfected desc
 
 
 
--- Total Count Of Population Vaccinated
-
-Select SUM(vac.new_vaccinations) as total_vaccinations, dea.population as total_population, SUM(cast(vac.new_vaccinations as int))/SUM(dea.population)*100 as VaccinatedPercentage
-FROM `project-01-357317.COVID.Covid_Deaths` dea
-JOIN `project-01-357317.COVID.Covid_Vaccinations` vac
-ON dea.location = vac.location
-and dea.date = vac.date
-Group By population
-order by 1,2
-
-
-
 
 -- Percentage Of Population Vaccinated Per County
 
